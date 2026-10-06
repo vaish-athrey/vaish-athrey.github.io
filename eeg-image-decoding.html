@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>EEG-to-Image Decoding, Vaishnavi Athrey Ramesh</title>
+<meta name="description" content="A CNN and Transformer pipeline for CMU 11-785 that decodes 122-channel EEG into image categories, plus a CLIP-based retrieval task.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="EEG-to-Image Decoding, Vaishnavi Athrey Ramesh">
+<meta property="og:description" content="A CNN and Transformer pipeline for CMU 11-785 that decodes 122-channel EEG into image categories, plus a CLIP-based retrieval task.">
+<meta property="og:image" content="assets/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="EEG-to-Image Decoding, Vaishnavi Athrey Ramesh">
+<meta name="twitter:description" content="A CNN and Transformer pipeline for CMU 11-785 that decodes 122-channel EEG into image categories, plus a CLIP-based retrieval task.">
+<meta name="twitter:image" content="assets/og-image.png">
+<link rel="icon" href="data:,">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div class="nav-scrim"></div>
+<nav class="site-nav">
+  <div class="wrap">
+    <a href="index.html" class="logo">
+      <span class="nav-avatar"><span>VA</span><img src="assets/profile.jpg" alt="" onerror="this.style.display='none'"></span>
+      vaishnavi<span class="dot">.</span>dev
+    </a>
+    <ul class="nav-links">
+      <li><a href="index.html#about">About</a></li>
+      <li><a href="index.html#experience">Experience</a></li>
+      <li><a href="index.html#skills">Skills</a></li>
+      <li><a href="index.html#work">Work</a></li>
+      <li><a href="index.html#coursework">Coursework</a></li>
+      <li><a href="index.html#beyond">Beyond Code</a></li>
+      <li><a href="index.html#contact">Contact</a></li>
+    </ul>
+    <div class="nav-right">
+      <a href="assets/Vaishnavi_Athrey_Ramesh_Resume.pdf" class="btn btn-outline resume-nav-btn" target="_blank" rel="noopener">Résumé</a>
+      <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<main>
+  <section class="case-hero">
+    <div class="wrap">
+      <a href="index.html#coursework" class="case-back">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+        Back to coursework
+      </a>
+      <div class="case-meta-row">
+        <span class="tag">CMU 11-785, Introduction to Deep Learning</span>
+        <span class="tag">Spring 2026</span>
+        <span class="tag">Team of 3</span>
+      </div>
+      <h1>EEG-to-Image Decoding</h1>
+      <p class="case-sub">A CNN and Transformer pipeline that decodes what category of image a subject was looking at from their raw EEG, plus a CLIP-based retrieval task connecting brain signals back to text captions.</p>
+
+      <div class="case-facts">
+        <div><div class="cf-label">Role</div><div class="cf-val">CNN+Transformer architecture, training infra</div></div>
+        <div><div class="cf-label">Stack</div><div class="cf-val">PyTorch · Transformers · CLIP</div></div>
+        <div><div class="cf-label">My model</div><div class="cf-val">617K params, 100x fewer than the baseline</div></div>
+        <div><div class="cf-label">Team</div><div class="cf-val">3 engineers</div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="case-body">
+    <div class="wrap case-cols">
+      <nav class="case-toc">
+        <a href="#overview">Overview</a>
+        <a href="#data">Data &amp; task</a>
+        <a href="#architecture">Architecture</a>
+        <a href="#debugging">Debugging</a>
+        <a href="#results">Results</a>
+        <a href="#retrieval">CLIP retrieval</a>
+        <a href="#finding">Key finding</a>
+      </nav>
+
+      <div>
+        <div id="overview" class="case-section reveal">
+          <h2>Overview</h2>
+          <p>This was my team project for 11-785, Introduction to Deep Learning, built with two teammates on a public multi-subject EEG dataset (Wang et al., 2025). The dataset pairs EEG recordings with the images subjects were looking at when the signal was captured, and we split the work into two tasks: classify which of 20 object categories a subject viewed, and separately, retrieve the matching image caption through a shared embedding space. We divided the build across the team, data pipeline, baseline model, the CNN+Transformer architecture, and the CLIP retrieval pipeline, and worked through the modeling decisions and results together. My own build was the CNN+Transformer model, the more parameter-efficient alternative to the baseline, along with the training infrastructure it ran on.</p>
+          <p>This writeup reflects our midterm checkpoint. The final phase of the project, mapping EEG directly into CLIP's embedding space for EEG-to-caption retrieval, was still in progress as of this report.</p>
+          <figure class="case-figure">
+            <img src="assets/diagrams/eeg-architecture.svg" alt="EEG architecture. The baseline MLP for comparison, my CNN+Transformer, and the CLIP retrieval branch.">
+            <figcaption class="case-figure-cap">EEG architecture. The baseline MLP for comparison, my CNN+Transformer, and the CLIP retrieval branch.</figcaption>
+          </figure>
+        </div>
+
+        <div id="data" class="case-section reveal">
+          <h2>Data &amp; task</h2>
+          <p>Each EEG recording has <strong>122 electrodes sampled at 1000 Hz</strong>, bandpass filtered (0.1 to 100 Hz) and notch filtered at 50 Hz, then epoched to the 500 ms after each image appeared, giving a 122x500 matrix per trial. The dataset spans <strong>13 subjects, 5 sessions each, 4 runs of 100 trials per session</strong>, 26,000 trials total, across 20 balanced PASCAL VOC categories.</p>
+          <p>We split by session rather than by trial: sessions 1 through 3 train (15,600 trials), session 4 validates (5,200), session 5 tests (5,200), for every subject. A random trial-level split would let a model cheat by memorizing subject-specific noise instead of learning the actual signal-to-category mapping, since EEG varies a lot between sessions even for the same person.</p>
+          <div class="case-stack">
+            <span class="tag">13 subjects</span><span class="tag">5 sessions each</span><span class="tag">26,000 trials</span><span class="tag">122 electrodes</span><span class="tag">20 classes</span>
+          </div>
+        </div>
+
+        <div id="architecture" class="case-section reveal">
+          <h2>Architecture</h2>
+          <p>The baseline flattens the 122x500 input to 61,000 dimensions and runs it through three fully connected layers (1024 to 512 to 256) with batch norm and 50% dropout, 63.2M parameters total.</p>
+          <p>The model I built takes a different approach: a <strong>2D CNN</strong> treats the EEG as a single-channel image, a temporal convolution (kernel 25, 32 filters) followed by a spatial convolution across all 122 electrodes (64 filters), then pooling down to 10 timesteps. That feeds a <strong>2-layer Transformer encoder</strong> (4 heads, dimension 128, pre-LN, GELU) with a CLS token, so the model learns which electrodes matter together for a given category instead of treating each one in isolation. Both models end in <strong>13 subject-specific prediction heads</strong>, since baseline signal characteristics differ enough between people that a shared head underperforms.</p>
+          <p>The result is <strong>617K parameters</strong> against the baseline's 63.2M, about 100x smaller, split roughly 272K in the CNN, 203K in the Transformer backbone, and 142K across the subject heads.</p>
+        </div>
+
+        <div id="debugging" class="case-section reveal">
+          <h2>Debugging the pipeline</h2>
+          <p>Two problems took the most time, and both looked like model problems at first.</p>
+          <ul>
+            <li>A CLIP-alignment fine-tuning run kept failing to warm-start. Diffing the state dicts tensor by tensor showed 77 tensors copied cleanly, 26 with mismatched shapes, and 22 with mismatched names. The root cause was two incompatible CNN architectures, not the training code.</li>
+            <li>A four-loss CLIP-alignment run collapsed. Pairwise cosine similarity across the embeddings showed everything converging to nearly the same vector. Reweighting the loss terms fixed it.</li>
+          </ul>
+        </div>
+
+        <div id="results" class="case-section reveal">
+          <h2>Results</h2>
+          <p>Both models clear the 5% chance baseline on 20-way classification. The baseline MLP reached 8.62% test accuracy, matching what the dataset's original paper reports. My CNN+Transformer reached 6.50%, lower in absolute terms but extracting real signal with 100x fewer parameters.</p>
+          <div class="case-metric-grid">
+            <div class="card case-metric"><div class="cm-num">8.62%</div><div class="cm-label">Baseline MLP test accuracy (63.2M params)</div></div>
+            <div class="card case-metric"><div class="cm-num">6.50%</div><div class="cm-label">My CNN+Transformer test accuracy (617K params)</div></div>
+            <div class="card case-metric"><div class="cm-num">5.00%</div><div class="cm-label">Random chance, for reference</div></div>
+          </div>
+          <p>Both models overfit across training, and my Transformer overfit harder despite its size: it reached 32.5% train accuracy against 7.08% validation at its best checkpoint (epoch 22), climbing to 42.6% train by the time we stopped (epoch 32). The baseline's heavier 50% dropout held its train-val gap somewhat tighter. Per-subject test accuracy ranged from 4.50% to 12.25%, sub-03 stayed near chance on both models while sub-17 was consistently the strongest signal. A learning-rate sweep on my model showed the same pattern at every setting, 1e-4 plateaued near chance, 1e-3 was unstable, and the middle ground (5e-4) gave the best validation number but still overfit hard.</p>
+          <p>Confusion analysis on my model's errors was informative on its own: the most common mistakes were animal-to-animal (dog predicted as cat 41 times, bird as cat 28, horse as cat 28), and "boat" turned up as a false prediction across unrelated categories like train and tvmonitor. That pattern suggests the EEG signal we're extracting encodes coarse, animate-versus-inanimate visual structure more reliably than fine-grained category detail.</p>
+        </div>
+
+        <div id="retrieval" class="case-section reveal">
+          <h2>CLIP retrieval</h2>
+          <p>The second task treats this as image-caption retrieval instead of classification: pretrained CLIP ViT-B/32 embeds both images and captions, then ranks 4,046 test captions by cosine similarity to establish an upper bound for what EEG-based retrieval could eventually reach.</p>
+          <div class="case-metric-grid">
+            <div class="card case-metric"><div class="cm-num">27.6%</div><div class="cm-label">Instance-level Recall@1</div></div>
+            <div class="card case-metric"><div class="cm-num">96.7%</div><div class="cm-label">Class-aware Recall@1</div></div>
+            <div class="card case-metric"><div class="cm-num">39.9%</div><div class="cm-label">Mean average precision</div></div>
+          </div>
+          <p>The gap between those two Recall@1 numbers is the interesting part: CLIP almost always retrieves the right <em>category</em>, but struggles to pick out the exact right image within that category. Since EEG most likely encodes category-level information rather than fine visual detail, that gap sets real expectations for how well the planned EEG-to-caption task can do.</p>
+        </div>
+
+        <div id="finding" class="case-section reveal">
+          <h2>Key finding</h2>
+          <p>Cross-session generalization, not model capacity, was our main bottleneck at this checkpoint. My CNN+Transformer overfits more severely than the much larger baseline MLP, which comes down to weaker dropout on my end and the Transformer's tendency to memorize session-specific temporal patterns rather than the underlying signal. The planned next steps, per our report, were Gaussian noise augmentation and channel dropout during training, and a projection head trained with contrastive loss to map EEG directly into CLIP's embedding space for the final EEG-to-caption task.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="wrap">
+      <a href="movie-recommender.html" class="case-next">
+        <div>
+          <div class="cn-label">Next project</div>
+          <h3>Movie Recommender on Kafka Streams →</h3>
+        </div>
+        <span class="project-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg></span>
+      </a>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-top">
+      <div><a href="index.html" class="logo">vaishnavi<span class="dot">.</span>dev</a></div>
+      <ul class="footer-links">
+        <li><a href="index.html#about">About</a></li>
+        <li><a href="index.html#coursework">Coursework</a></li>
+        <li><a href="index.html#contact">Contact</a></li>
+      </ul>
+      <div class="footer-social">
+        <a href="mailto:vaish.athrey@gmail.com" aria-label="Email" title="Email">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 7l9 6 9-6"/><rect x="3" y="5" width="18" height="14" rx="2"/></svg>
+        </a>
+        <a href="https://www.linkedin.com/in/vaishnavi-athrey/" target="_blank" rel="noopener" aria-label="LinkedIn" title="LinkedIn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M7 10v7M7 7v.01M11 17v-4.5a1.5 1.5 0 013-0V17M14 12.5a2.5 2.5 0 015 0V17"/></svg>
+        </a>
+        <a href="https://github.com/vathreyr" target="_blank" rel="noopener" aria-label="GitHub" title="GitHub">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M9 19c-4.3 1.4-4.3-2.5-6-3m12 5v-3.5c0-1 .1-1.4-.5-2 2.8-.3 5.5-1.4 5.5-6a4.6 4.6 0 00-1.3-3.2 4.2 4.2 0 00-.1-3.2s-1.1-.3-3.5 1.3a12.3 12.3 0 00-6.2 0C6.5 2.8 5.4 3.1 5.4 3.1a4.2 4.2 0 00-.1 3.2A4.6 4.6 0 004 9.5c0 4.6 2.7 5.7 5.5 6-.6.6-.6 1.1-.5 2V21"/></svg>
+        </a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© <span data-year></span> Vaishnavi Athrey Ramesh</span>
+      <span>Built in Pittsburgh, PA</span>
+    </div>
+  </div>
+</footer>
+
+<script src="js/main.js"></script>
+</body>
+</html>

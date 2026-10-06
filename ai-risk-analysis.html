@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI Risk Analysis Automation, Vaishnavi Athrey Ramesh</title>
+<meta name="description" content="LLM-assisted tooling that automates STPA-style risk analysis for a dashcam missing-child-search system, with schema-constrained output and human review checkpoints.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="AI Risk Analysis Automation, Vaishnavi Athrey Ramesh">
+<meta property="og:description" content="LLM-assisted tooling that automates STPA-style risk analysis for a dashcam missing-child-search system, with schema-constrained output and human review checkpoints.">
+<meta property="og:image" content="assets/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="AI Risk Analysis Automation, Vaishnavi Athrey Ramesh">
+<meta name="twitter:description" content="LLM-assisted tooling that automates STPA-style risk analysis for a dashcam missing-child-search system, with schema-constrained output and human review checkpoints.">
+<meta name="twitter:image" content="assets/og-image.png">
+<link rel="icon" href="data:,">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div class="nav-scrim"></div>
+<nav class="site-nav">
+  <div class="wrap">
+    <a href="index.html" class="logo">
+      <span class="nav-avatar"><span>VA</span><img src="assets/profile.jpg" alt="" onerror="this.style.display='none'"></span>
+      vaishnavi<span class="dot">.</span>dev
+    </a>
+    <ul class="nav-links">
+      <li><a href="index.html#about">About</a></li>
+      <li><a href="index.html#experience">Experience</a></li>
+      <li><a href="index.html#skills">Skills</a></li>
+      <li><a href="index.html#work">Work</a></li>
+      <li><a href="index.html#coursework">Coursework</a></li>
+      <li><a href="index.html#beyond">Beyond Code</a></li>
+      <li><a href="index.html#contact">Contact</a></li>
+    </ul>
+    <div class="nav-right">
+      <a href="assets/Vaishnavi_Athrey_Ramesh_Resume.pdf" class="btn btn-outline resume-nav-btn" target="_blank" rel="noopener">Résumé</a>
+      <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<main>
+  <section class="case-hero">
+    <div class="wrap">
+      <a href="index.html#coursework" class="case-back">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+        Back to coursework
+      </a>
+      <div class="case-meta-row">
+        <span class="tag">CMU 17-645, SE for AI-Enabled Systems</span>
+        <span class="tag">Solo</span>
+      </div>
+      <h1>AI Risk Analysis Automation</h1>
+      <p class="case-sub">LLM-assisted tooling that automates the stakeholder, requirements, and assumption analysis for a dashcam missing-child-search system, with a human-review checkpoint between every stage.</p>
+
+      <div class="case-facts">
+        <div><div class="cf-label">Role</div><div class="cf-val">Solo, pipeline design and analysis</div></div>
+        <div><div class="cf-label">Stack</div><div class="cf-val">Azure OpenAI · Python · Graphviz</div></div>
+        <div><div class="cf-label">Method</div><div class="cf-val">STPA-style requirements analysis</div></div>
+        <div><div class="cf-label">Output</div><div class="cf-val">~110 requirements across 5+ stakeholders</div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="case-body">
+    <div class="wrap case-cols">
+      <nav class="case-toc">
+        <a href="#overview">Overview</a>
+        <a href="#pipeline">The pipeline</a>
+        <a href="#findings">Curated findings</a>
+        <a href="#approach">Why this design</a>
+      </nav>
+
+      <div>
+        <div id="overview" class="case-section reveal">
+          <h2>Overview</h2>
+          <p>The assignment scenario: a company is proposing a dashcam network that can recognize missing children and notify law enforcement. The job is to work through a formal safety and privacy risk analysis of that system: who the stakeholders are, what they need from the system, how it could fail them, and what requirements would prevent that. Doing all of that by hand for a system with this many stakeholders (drivers, fleet operators, law enforcement, bystanders, company legal and compliance, and more) is slow and repetitive in a specific way that made it a good candidate for automation, with a human still making every judgment call.</p>
+          <figure class="case-figure">
+            <img src="assets/diagrams/risk-pipeline.svg" alt="Five-stage analysis pipeline with a human-review checkpoint between every stage.">
+            <figcaption class="case-figure-cap">Five-stage analysis pipeline with a human-review checkpoint between every stage.</figcaption>
+          </figure>
+        </div>
+
+        <div id="pipeline" class="case-section reveal">
+          <h2>The pipeline</h2>
+          <p>I built a five-stage pipeline, each stage a separate script, with a human-review checkpoint between every one, I edited the JSON output by hand between stages rather than letting it run end to end unsupervised:</p>
+          <ul>
+            <li><strong>Stage 1, stakeholders:</strong> generates candidate stakeholders for the scenario.</li>
+            <li><strong>Stage 2, goals to losses to requirements:</strong> for each stakeholder, works from their values and goals down to potential losses and the requirements that would prevent them.</li>
+            <li><strong>Stage 3, assumptions and specs:</strong> for each requirement, generates the ASM (assumptions about the environment the software can't enforce) and SPEC (what the system senses and emits at its boundary) that would make it verifiable.</li>
+            <li><strong>Stage 4, prioritization:</strong> scores everything by severity and "surprise," to filter roughly 110 requirements down to a shortlist worth close human attention.</li>
+            <li><strong>Stage 5, report rendering:</strong> renders the staged JSON into a readable analysis document.</li>
+          </ul>
+          <p>Every LLM call goes through a shared Azure OpenAI client using the Responses API's JSON-schema mode, so every stage's output is schema-constrained structured JSON rather than free text I'd have to parse defensively. A separate script builds the fault-tree diagrams with Graphviz for the two findings I took to that level of depth.</p>
+        </div>
+
+        <div id="findings" class="case-section reveal">
+          <h2>Curated findings</h2>
+          <p>Out of the roughly 110 generated requirements, I picked four to write up in depth, chosen to fail for different reasons rather than being four versions of the same problem:</p>
+          <ul>
+            <li><strong>Disabling the feature is not one control point.</strong> The scenario gives dashcams three separate ways data can leave the device (paired phone, WiFi hotspot, edge node), so a "disable" toggle that only gates the main app path silently leaves the other two as bypasses. The same pattern showed up for two other stakeholders' opt-out requirements, which is what convinced me it was structural rather than one-off.</li>
+            <li><strong>Rare searches starve the calibration data confidence scores need.</strong> The scenario mentions roughly one Amber Alert a day nationwide, meaning any local area sees searches rarely enough that "we'll calibrate confidence off production feedback" quietly fails: there may never be enough verified outcomes in a given lighting and distance condition to catch drift before it causes harm.</li>
+            <li><strong>A single machine match can trigger a real police stop of an innocent bystander.</strong> This is the requirement most directly downstream of the AI component being wrong. The fix isn't tuning precision higher, it's architectural: a raw model output should never become an identity claim handed to police without an independent, human, in-agency confirmation, and the system has to fail closed when that confirmation can't be verified.</li>
+            <li><strong>Edge partnerships quietly turn "search this footage" into "watch continuously."</strong> The scenario frames edge computing as an opportunity the company is still just considering, which is exactly why nobody has written the rules yet that would stop an authorized search from becoming de facto continuous surveillance at a partner site.</li>
+          </ul>
+        </div>
+
+        <div id="approach" class="case-section reveal">
+          <h2>Why this design</h2>
+          <p>The choice to keep a human-review checkpoint between every stage, instead of letting the whole pipeline run unattended, was deliberate. LLM output at this kind of analysis is useful as raw material, plausible stakeholders, plausible failure modes, but the actual judgment of which findings matter and why has to be mine. The pipeline's job is to widen the space of things considered so I'm not starting from a blank page, not to make the final call on what's a real risk.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="wrap">
+      <a href="zulip-llm-features.html" class="case-next">
+        <div>
+          <div class="cn-label">Next project</div>
+          <h3>LLM Features for Zulip →</h3>
+        </div>
+        <span class="project-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg></span>
+      </a>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-top">
+      <div><a href="index.html" class="logo">vaishnavi<span class="dot">.</span>dev</a></div>
+      <ul class="footer-links">
+        <li><a href="index.html#about">About</a></li>
+        <li><a href="index.html#coursework">Coursework</a></li>
+        <li><a href="index.html#contact">Contact</a></li>
+      </ul>
+      <div class="footer-social">
+        <a href="mailto:vaish.athrey@gmail.com" aria-label="Email" title="Email">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 7l9 6 9-6"/><rect x="3" y="5" width="18" height="14" rx="2"/></svg>
+        </a>
+        <a href="https://www.linkedin.com/in/vaishnavi-athrey/" target="_blank" rel="noopener" aria-label="LinkedIn" title="LinkedIn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M7 10v7M7 7v.01M11 17v-4.5a1.5 1.5 0 013-0V17M14 12.5a2.5 2.5 0 015 0V17"/></svg>
+        </a>
+        <a href="https://github.com/vathreyr" target="_blank" rel="noopener" aria-label="GitHub" title="GitHub">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M9 19c-4.3 1.4-4.3-2.5-6-3m12 5v-3.5c0-1 .1-1.4-.5-2 2.8-.3 5.5-1.4 5.5-6a4.6 4.6 0 00-1.3-3.2 4.2 4.2 0 00-.1-3.2s-1.1-.3-3.5 1.3a12.3 12.3 0 00-6.2 0C6.5 2.8 5.4 3.1 5.4 3.1a4.2 4.2 0 00-.1 3.2A4.6 4.6 0 004 9.5c0 4.6 2.7 5.7 5.5 6-.6.6-.6 1.1-.5 2V21"/></svg>
+        </a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© <span data-year></span> Vaishnavi Athrey Ramesh</span>
+      <span>Built in Pittsburgh, PA</span>
+    </div>
+  </div>
+</footer>
+
+<script src="js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DocuMind AI, Vaishnavi Athrey Ramesh</title>
+<meta name="description" content="DocuMind AI: an end-to-end RAG pipeline for automated legal document review, built with FastAPI, LangChain, Pinecone, and Next.js.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="DocuMind AI, Vaishnavi Athrey Ramesh">
+<meta property="og:description" content="DocuMind AI: an end-to-end RAG pipeline for automated legal document review, built with FastAPI, LangChain, Pinecone, and Next.js.">
+<meta property="og:image" content="assets/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="DocuMind AI, Vaishnavi Athrey Ramesh">
+<meta name="twitter:description" content="DocuMind AI: an end-to-end RAG pipeline for automated legal document review, built with FastAPI, LangChain, Pinecone, and Next.js.">
+<meta name="twitter:image" content="assets/og-image.png">
+<link rel="icon" href="data:,">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div class="nav-scrim"></div>
+<nav class="site-nav">
+  <div class="wrap">
+    <a href="index.html" class="logo">vaishnavi<span class="dot">.</span>dev</a>
+    <ul class="nav-links">
+      <li><a href="index.html#about">About</a></li>
+      <li><a href="index.html#experience">Experience</a></li>
+      <li><a href="index.html#skills">Skills</a></li>
+      <li><a href="index.html#work">Work</a></li>
+      <li><a href="index.html#coursework">Coursework</a></li>
+      <li><a href="index.html#beyond">Beyond Code</a></li>
+      <li><a href="index.html#contact">Contact</a></li>
+    </ul>
+    <div class="nav-right">
+      <a href="assets/Vaishnavi_Athrey_Ramesh_Resume.pdf" class="btn btn-outline resume-nav-btn" target="_blank" rel="noopener">Résumé</a>
+      <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<main>
+  <section class="case-hero">
+    <div class="wrap">
+      <a href="index.html#work" class="case-back">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+        Back to projects
+      </a>
+      <div class="case-meta-row">
+        <span class="tag">Project 01</span>
+        <span class="tag">Dec 2025 – Feb 2026</span>
+        <span class="tag">Independent</span>
+      </div>
+      <h1>DocuMind AI: a RAG pipeline for automated legal document review</h1>
+      <p class="case-sub">An end-to-end retrieval-augmented generation system that reads, chunks, and semantically indexes legal documents, then serves grounded answers through a containerized full-stack app.</p>
+
+      <div class="case-facts">
+        <div><div class="cf-label">Role</div><div class="cf-val">Solo builder, architecture, backend &amp; frontend</div></div>
+        <div><div class="cf-label">Stack</div><div class="cf-val">FastAPI · LangChain · Pinecone · Next.js</div></div>
+        <div><div class="cf-label">Key metric</div><div class="cf-val">92% retrieval accuracy on benchmark queries</div></div>
+        <div><div class="cf-label">Deployment</div><div class="cf-val">Fully containerized with Docker</div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="case-body">
+    <div class="wrap case-cols">
+      <nav class="case-toc">
+        <a href="#overview">Overview</a>
+        <a href="#ingestion">Ingestion</a>
+        <a href="#retrieval">Retrieval</a>
+        <a href="#delivery">Delivery</a>
+        <a href="#impact">Impact</a>
+      </nav>
+
+      <div>
+        <div id="overview" class="case-section reveal">
+          <h2>Overview</h2>
+          <p>
+            Reviewing legal documents by hand is slow, repetitive, and error prone. The same clauses
+            get re-read across hundreds of contracts. DocuMind AI is a document-review assistant that
+            ingests legal PDFs, extracts their structure, and lets a reviewer ask questions against the
+            document in natural language, with every answer grounded in the source text.
+          </p>
+          <p>
+            I built the whole system solo. That covers PDF ingestion and clause extraction, the
+            embedding and retrieval layer, the FastAPI backend, and a Next.js frontend, then
+            containerizing the entire stack so it spins up in minutes instead of hours.
+          </p>
+          <figure class="case-figure">
+            <img src="assets/diagrams/documind-pipeline.svg" alt="DocuMind AI pipeline. Ingestion on top, query path below, all containerized with Docker.">
+            <figcaption class="case-figure-cap">DocuMind AI pipeline. Ingestion on top, query path below, all containerized with Docker.</figcaption>
+          </figure>
+        </div>
+
+        <div id="ingestion" class="case-section reveal">
+          <h2>Ingestion &amp; structure extraction</h2>
+          <p>
+            Legal PDFs aren't plain text. Clauses, defined terms, and tables all carry meaning in
+            their structure. I used <strong>pdfplumber</strong> to parse documents while preserving that
+            structure, running structured clause extraction and table parsing so downstream retrieval
+            doesn't lose context that a naive text dump would flatten.
+          </p>
+          <ul>
+            <li>PDF ingestion with pdfplumber, preserving clause boundaries and table layout.</li>
+            <li>Structured extraction pass to tag clause types before chunking.</li>
+            <li>Output normalized into a consistent schema the embedding layer can consume.</li>
+          </ul>
+        </div>
+
+        <div id="retrieval" class="case-section reveal">
+          <h2>Embedding &amp; retrieval</h2>
+          <p>
+            Documents are chunked into <strong>512-token windows with a 50-token overlap</strong> to
+            avoid splitting clauses mid-thought, embedded with OpenAI's text embedding models, and stored
+            in <strong>Pinecone</strong> for fast approximate nearest-neighbor search. LangChain
+            orchestrates the retrieval chain, pulling the most relevant chunks for a query before they
+            get passed to the generation step.
+          </p>
+          <div class="case-callout">chunk_size=512 · chunk_overlap=50 · top_k retrieval via Pinecone cosine similarity</div>
+          <div class="case-metric-grid">
+            <div class="card case-metric"><div class="cm-num">92%</div><div class="cm-label">Retrieval accuracy on benchmark queries</div></div>
+            <div class="card case-metric"><div class="cm-num">512</div><div class="cm-label">Tokens per chunk</div></div>
+            <div class="card case-metric"><div class="cm-num">50</div><div class="cm-label">Token overlap between chunks</div></div>
+          </div>
+        </div>
+
+        <div id="delivery" class="case-section reveal">
+          <h2>Delivery &amp; deployment</h2>
+          <p>
+            The backend is an async <strong>FastAPI</strong> service exposing the ingestion and query
+            endpoints. The frontend is a <strong>Next.js</strong> app styled with Tailwind CSS. The
+            whole thing, API, vector store client, and frontend, is <strong>containerized with
+            Docker</strong>, so a fresh environment goes from clone to running in under five minutes
+            instead of the hours it used to take to wire up manually.
+          </p>
+          <div class="case-stack">
+            <span class="tag">Python</span><span class="tag">FastAPI</span><span class="tag">LangChain</span><span class="tag">Pinecone</span><span class="tag">pdfplumber</span><span class="tag">Next.js</span><span class="tag">Tailwind CSS</span><span class="tag">Docker</span>
+          </div>
+        </div>
+
+        <div id="impact" class="case-section reveal">
+          <h2>Impact</h2>
+          <ul>
+            <li>Cut the manual review loop down to a natural-language query against the actual source document.</li>
+            <li>92% retrieval accuracy on benchmark queries, validating the chunking and embedding strategy.</li>
+            <li>Environment setup time dropped from hours to under 5 minutes once the stack was containerized.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="wrap">
+      <a href="sign-language-to-speech.html" class="case-next">
+        <div>
+          <div class="cn-label">Next project</div>
+          <h3>Sign Language to Speech →</h3>
+        </div>
+        <span class="project-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg></span>
+      </a>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-top">
+      <div><a href="index.html" class="logo">vaishnavi<span class="dot">.</span>dev</a></div>
+      <ul class="footer-links">
+        <li><a href="index.html#about">About</a></li>
+        <li><a href="index.html#work">Work</a></li>
+        <li><a href="index.html#contact">Contact</a></li>
+      </ul>
+      <div class="footer-social">
+        <a href="mailto:vaish.athrey@gmail.com" aria-label="Email" title="Email">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 7l9 6 9-6"/><rect x="3" y="5" width="18" height="14" rx="2"/></svg>
+        </a>
+        <a href="https://www.linkedin.com/in/vaishnavi-athrey/" target="_blank" rel="noopener" aria-label="LinkedIn" title="LinkedIn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M7 10v7M7 7v.01M11 17v-4.5a1.5 1.5 0 013-0V17M14 12.5a2.5 2.5 0 015 0V17"/></svg>
+        </a>
+        <a href="https://github.com/vathreyr" target="_blank" rel="noopener" aria-label="GitHub" title="GitHub">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M9 19c-4.3 1.4-4.3-2.5-6-3m12 5v-3.5c0-1 .1-1.4-.5-2 2.8-.3 5.5-1.4 5.5-6a4.6 4.6 0 00-1.3-3.2 4.2 4.2 0 00-.1-3.2s-1.1-.3-3.5 1.3a12.3 12.3 0 00-6.2 0C6.5 2.8 5.4 3.1 5.4 3.1a4.2 4.2 0 00-.1 3.2A4.6 4.6 0 004 9.5c0 4.6 2.7 5.7 5.5 6-.6.6-.6 1.1-.5 2V21"/></svg>
+        </a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© <span data-year></span> Vaishnavi Athrey Ramesh</span>
+      <span>Built in Pittsburgh, PA</span>
+    </div>
+  </div>
+</footer>
+
+<script src="js/main.js"></script>
+</body>
+</html>
